@@ -15,29 +15,18 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from scripts.pdfOCR import pdfOCR
 from scripts.elasticStore import pdfMappingDict
 from scripts.elasticStore import ElasticStore
+import scripts.cons as cons
 ```
 
 Need to install poppler and tesseract locally in windows:
 * https://github.com/oschwartz10612/poppler-windows/releases/
 * https://github.com/UB-Mannheim/tesseract/wiki
 
-```{python}
-root_dir = "E:\\GitHub\\PdfVectorStore"
-cred_dir = os.path.join(root_dir, ".cred")
-data_dir = os.path.join(root_dir, "data")
-pdf_fpath = os.path.join(data_dir, "1.pdf")
-elastic_docker_ca_crt_fpath = os.path.join(cred_dir, "http_ca.crt")
-elastic_docker_cred_fpath = os.path.join(cred_dir, "elastic.json")
-tesseract_exe_fpath = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-elastic_localhost_url="https://localhost:9200"
-elastic_index_name = "pdfvectorstore"
-```
-
 Load elastic credientials
 
 ```{python}
 # load elastic credientials from .json file
-with open(elastic_docker_cred_fpath, "rb") as j:
+with open(cons.elastic_docker_cred_fpath, "rb") as j:
     elastic_config = json.loads(j.read())
 ```
 
@@ -55,8 +44,8 @@ OCR the data from the image.
 
 ```{python}
 # OCR pdf invoice
-pytesseract.pytesseract.tesseract_cmd = tesseract_exe_fpath
-documents = pdfOCR(pdf_fpath)
+pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
+documents = pdfOCR(cons.pdf_fpath)
 ```
 
 # Elastic Data Store
@@ -67,8 +56,8 @@ Connect to elastic search.
 # connect to elastic store
 es = ElasticStore(
     http_auth=(elastic_config["user"], elastic_config["password"]), 
-    elastic_docker_ca_crt_fpath=elastic_docker_ca_crt_fpath,
-    elastic_localhost_url="https://localhost:9200", 
+    elastic_docker_ca_crt_fpath=cons.elastic_docker_ca_crt_fpath,
+    elastic_localhost_url=cons.elastic_localhost_url, 
     request_timeout=10
     )
 ```
@@ -76,37 +65,37 @@ es = ElasticStore(
 List available indicies in elasticsearch.
 
 ```{python}
-es.listIndices(index=f"*{elastic_index_name}*")
+es.listIndices(index=f"*{cons.elastic_index_name}*")
 ```
 
 Delete the pdf search elastic index.
 
 ```{python}
 # delete index
-es.deleteIndex(index=elastic_index_name)
+es.deleteIndex(index=cons.elastic_index_name)
 ```
 
 Create a new elastic index for pdf search.
 
 ```{python}
 # create index
-es.createIndex(index=elastic_index_name, mappings=pdfMappingDict)
+es.createIndex(index=cons.elastic_index_name, mappings=pdfMappingDict)
 ```
 
 Get the mapping of a elastic index.
 
 ```{python}
-es.getIndexMapping(index=elastic_index_name)
+es.getIndexMapping(index=cons.elastic_index_name)
 ```
 
 Load documents into elastic index.
 
 ```{python}
-es.loadIndex(index=elastic_index_name, documents=documents)
+es.loadIndex(index=cons.elastic_index_name, documents=documents)
 ```
 
 Query document by id
 
 ```{python}
-es.getDocumentfromId(index=elastic_index_name, id='10111')
+es.getDocumentfromId(index=cons.elastic_index_name, id='10111')
 ```
