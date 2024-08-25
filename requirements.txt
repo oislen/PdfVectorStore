@@ -1,0 +1,8 @@
+pandas
+elasticsearch
+pdf2image
+pytesseract
+tesseract
+tesseract-ocr
+transformers
+torch
