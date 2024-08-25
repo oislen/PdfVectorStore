@@ -1,0 +1,17 @@
+GET /_cat/indices
+DELETE pdfsearch
+GET /pdfvectorstore/_mappings
+GET /pdfvectorstore/_search
+GET /pdfvectorstore/_doc/10111
+GET /pdfvectorstore/_search/
+{
+    "query": { 
+        "bool": {
+         "filter": {
+                "term": {
+                   "_id": "10111"
+                }
+            }
+        }
+    }
+}
