@@ -7,7 +7,7 @@ def pdfOCR(pdfFpath):
     """
     """
     # convert from pdf to images
-    docs = convert_from_path(pdf_path=pdfFpath, dpi=500, poppler_path=r'C:\\poppler-24.07.0\\Library\\bin')
+    docs = convert_from_path(pdf_path=pdfFpath, dpi=500, poppler_path='C:\\poppler-23.11.0\\Library\\bin')
     # ocr image to data
     dfs = [pd.DataFrame(pytesseract.image_to_data(doc, output_type='dict')).assign(page_num=idx) for idx, doc in enumerate(docs)]
     # concat datafames
@@ -23,7 +23,7 @@ def pdfOCR(pdfFpath):
     aggDf = concatDf.loc[filter_missing, :].sort_values(by=orderyCols).groupby(by=groupbyCols, as_index=False).agg(aggDict)
     # create elastic _id
     idKeys = ["invoice_id", "page_num","block_num","par_num","line_num"]
-    aggDf['_id'] = aggDf[idKeys].astype(str).sum(axis=1)
+    aggDf['_id'] = aggDf[idKeys].astype(str).sum(axis=1).astype(int)
     # convert to dict
     aggDict = aggDf.to_dict(orient='records')
     return aggDict
