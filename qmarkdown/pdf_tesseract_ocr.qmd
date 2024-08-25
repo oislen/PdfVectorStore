@@ -22,7 +22,7 @@ Need to install poppler and tesseract locally in windows:
 * https://github.com/UB-Mannheim/tesseract/wiki
 
 ```{python}
-root_dir = "C:\\Users\\OisinLeonard\\Documents\\PdfVectorStore"
+root_dir = "E:\\GitHub\\PdfVectorStore"
 cred_dir = os.path.join(root_dir, ".cred")
 data_dir = os.path.join(root_dir, "data")
 pdf_fpath = os.path.join(data_dir, "1.pdf")
