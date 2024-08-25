@@ -3,11 +3,11 @@ from pdf2image import convert_from_path
 import pytesseract
 import pandas as pd
 
-def pdfOCR(pdfFpath):
+def pdfOCR(pdfFpath, dpi=500, poppler_path='C:\\poppler-23.11.0\\Library\\bin'):
     """
     """
     # convert from pdf to images
-    docs = convert_from_path(pdf_path=pdfFpath, dpi=500, poppler_path='C:\\poppler-23.11.0\\Library\\bin')
+    docs = convert_from_path(pdf_path=pdfFpath, dpi=dpi, poppler_path=poppler_path)
     # ocr image to data
     dfs = [pd.DataFrame(pytesseract.image_to_data(doc, output_type='dict')).assign(page_num=idx) for idx, doc in enumerate(docs)]
     # concat datafames
