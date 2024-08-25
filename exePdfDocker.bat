@@ -8,6 +8,9 @@ SET DOCKER_IMAGE=%DOCKER_USER%/%DOCKER_REPO%:%DOCKER_TAG%
 docker container prune -f
 docker rm -f %DOCKER_IMAGE%
 
+:: Create a new docker network.
+call docker network create elastic
+
 :: build docker image
 call docker build --no-cache -t %DOCKER_IMAGE% . 
 ::call docker build -t %DOCKER_IMAGE% .
