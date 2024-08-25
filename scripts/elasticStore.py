@@ -61,7 +61,7 @@ class ElasticStore():
         """
         """
         try:
-            elasticIndices = self.es.indices.get_alias(index)
+            elasticIndices = self.es.indices.get_alias(index=index)
         except Exception as e:
             logging.error(e)
             elasticIndices = None
