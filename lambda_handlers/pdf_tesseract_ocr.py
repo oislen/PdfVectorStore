@@ -6,18 +6,27 @@ import pytesseract
 
 import PdfVectorStore.scripts.cons as cons
 from PdfVectorStore.scripts.pdfOCR import pdfOCR
+from PdfVectorStore.scripts.elasticStore import pdfMappingDict
 from PdfVectorStore.scripts.elasticStore import ElasticStore
+from PdfVectorStore.scripts.bgeEncoder import bgeEncoder
 
 # set up logging
 lgr = logging.getLogger()
 lgr.setLevel(logging.INFO)
 
+logging.info(f"OCR-ing .pdf file: {cons.pdf_fpath}")
+
+# initialise encoder
+encoder = bgeEncoder()
+
+# OCR pdf invoice
+documents = pdfOCR(pdfFpath=cons.pdf_fpath, dpi=cons.dpi, poppler_path=cons.poppler_path, encoder=encoder)
+
+logging.info("Connecting to ElasticStore")
+
 # load elastic credientials from .json file
 with open(cons.elastic_docker_cred_fpath, "rb") as j:
     elastic_config = json.loads(j.read())
-
-# OCR pdf invoice
-documents = pdfOCR(pdfFpath=cons.pdf_fpath, dpi=cons.dpi, poppler_path=cons.poppler_path)
 
 # connect to elastic store
 es = ElasticStore(
@@ -27,5 +36,22 @@ es = ElasticStore(
     request_timeout=cons.elastic_request_timeout
     )
 
-# load data into elastic index
-es.loadIndex(index=cons.elastic_index_name, documents=documents)
+# list all elastic indices
+es.listIndices(index=f"*{cons.elastic_index_name}*")
+
+if False:
+
+    # delete index
+    es.deleteIndex(index=cons.elastic_index_name)
+
+    # create index
+    es.createIndex(index=cons.elastic_index_name, mappings=pdfMappingDict)
+
+    # get elastic index mapping
+    es.getIndexMapping(index=cons.elastic_index_name)
+
+    # load data into elastic index
+    es.loadIndex(index=cons.elastic_index_name, documents=documents)
+
+    # query document by id
+    es.getDocumentfromId(index=cons.elastic_index_name, id='10111')
