@@ -18,3 +18,6 @@ call docker build --no-cache -t %DOCKER_IMAGE% .
 :: run docker container
 SET UBUNTU_DIR=/home/ubuntu
 call docker run  --name pdf01 --net elastic -p 8501:8501 -it %DOCKER_IMAGE%
+
+:: copy credential files to docker container
+call docker copy .cred pdf01:/home/ubuntu/PdfVectorStore/.cred
