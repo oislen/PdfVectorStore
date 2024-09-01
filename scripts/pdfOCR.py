@@ -16,11 +16,13 @@ def pdfOCR(pdfFpath, encoder, dpi=500, poppler_path='C:\\poppler-23.11.0\\Librar
     invoice_id = int(os.path.splitext(os.path.basename(pdfFpath))[0])
     concatDf['invoice_id'] = invoice_id
     # aggregate to line level
-    filter_missing = concatDf['conf'] != -1
+    filter_missing = concatDf['conf'].astype(float) != -1
     orderyCols = ['invoice_id', 'page_num', 'block_num', 'par_num', 'line_num']
     groupbyCols = ['invoice_id', 'page_num', 'block_num', 'par_num', 'line_num']
     aggDict = {'left':'min', 'top':'min', 'width':'sum', 'height':'max', 'text':' '.join}
     aggDf = concatDf.loc[filter_missing, :].sort_values(by=orderyCols).groupby(by=groupbyCols, as_index=False).agg(aggDict)
+    # apply encodering
+    aggDf['encoding'] = aggDf['text'].apply(lambda text: encoder.encode(text).tolist())
     # create elastic _id
     idKeys = ["invoice_id", "page_num","block_num","par_num","line_num"]
     aggDf['_id'] = aggDf[idKeys].astype(str).sum(axis=1).astype(int)
