@@ -55,3 +55,9 @@ if False:
 
     # query document by id
     es.getDocumentfromId(index=cons.elastic_index_name, id='10111')
+
+# run the query
+results = es.vectorSearch(text="Musterkunde", encoder=encoder, elastic_index_name=cons.elastic_index_name, elastic_field="encoding", k=10, num_candidates=10)
+
+# print results
+results
