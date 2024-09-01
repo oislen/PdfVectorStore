@@ -106,3 +106,12 @@ Query document by id
 ```{python}
 es.getDocumentfromId(index=cons.elastic_index_name, id='10111')
 ```
+
+Search for text against elastic store.
+
+```{python}
+# run the query
+results = es.vectorSearch(text="Musterkunde", encoder=encoder, elastic_index_name=cons.elastic_index_name, elastic_field="encoding", k=10, num_candidates=10)
+# print results
+results
+```
