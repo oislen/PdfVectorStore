@@ -58,6 +58,7 @@ es = ElasticStore(
     http_auth=(elastic_config["user"], elastic_config["password"]), 
     elastic_docker_ca_crt_fpath=cons.elastic_docker_ca_crt_fpath,
     elastic_localhost_url=cons.elastic_localhost_url, 
+    verify_certs=True,
     request_timeout=10
     )
 ```
