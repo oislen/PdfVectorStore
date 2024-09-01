@@ -16,6 +16,7 @@ from scripts.pdfOCR import pdfOCR
 from scripts.elasticStore import pdfMappingDict
 from scripts.elasticStore import ElasticStore
 import scripts.cons as cons
+from scripts.bgeEncoder import BgeEncoder
 ```
 
 Need to install poppler and tesseract locally in windows:
@@ -40,12 +41,17 @@ lgr.setLevel(logging.INFO)
 
 # PDF OCR
 
+```{python}
+# initialise encoder
+encoder = BgeEncoder()
+```
+
 OCR the data from the image.
 
 ```{python}
 # OCR pdf invoice
 pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
-documents = pdfOCR(cons.pdf_fpath)
+documents = pdfOCR(pdfFpath=cons.pdf_fpath, dpi=cons.dpi, poppler_path=cons.poppler_path, encoder=encoder)
 ```
 
 # Elastic Data Store
