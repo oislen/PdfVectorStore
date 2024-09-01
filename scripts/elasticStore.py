@@ -13,7 +13,8 @@ pdfMappingDict = {
         "top" : {"type" : "long"},
         "width" : {"type" : "long"},
         "height" : {"type" : "long"},
-        "text" : {"type" : "keyword"}
+        "text" : {"type" : "keyword"},
+        "encoding" : {"type" : "dense_vector", "dims" : 768}
         }
     }
 
