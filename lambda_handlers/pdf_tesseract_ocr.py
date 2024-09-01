@@ -32,7 +32,7 @@ with open(cons.elastic_docker_cred_fpath, "rb") as j:
 es = ElasticStore(
     http_auth=(elastic_config["user"], elastic_config["password"]), 
     elastic_docker_ca_crt_fpath=cons.elastic_docker_ca_crt_fpath,
-    elastic_localhost_url="https://host.docker.internal:9200", 
+    elastic_localhost_url=cons.elastic_localhost_url, 
     request_timeout=cons.elastic_request_timeout
     )
 
