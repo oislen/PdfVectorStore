@@ -1,7 +1,7 @@
 import torch
 import transformers
 
-class bgeEncoder(torch.nn.Module):
+class BgeEncoder(torch.nn.Module):
 
     """
     https://huggingface.co/BAAI/bge-base-en-v1.5
