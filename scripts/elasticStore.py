@@ -88,3 +88,23 @@ class ElasticStore():
             logging.error(e)
             document = None
         return document
+    
+    def vectorSearch(self, text, encoder, elastic_index_name, elastic_field, k=10, num_candidates=10):
+        """
+        """
+        try:
+            # encode text for query
+            text_encoding = encoder.encode(text=text).tolist()
+            # generate elastic query
+            elastic_query = {
+                "field": elastic_field,
+                "query_vector": text_encoding,
+                "k": k,
+                "num_candidates": num_candidates
+                }
+            # run the elastic query
+            results = self.es.search(index=elastic_index_name, knn=elastic_query)
+        except Exception as e:
+            logging.error(e)
+            results = None
+        return results
