@@ -1,14 +1,14 @@
 import torch
 import transformers
 
-class BgeEncoder(torch.nn.Module):
+class bgeEncoder(torch.nn.Module):
 
     """
     https://huggingface.co/BAAI/bge-base-en-v1.5
     """
     
     def __init__(self, model_type='BAAI/bge-base-en-v1.5', max_len=200):
-        super(BgeEncoder, self).__init__()
+        super(bgeEncoder, self).__init__()
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.max_len = max_len
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(model_type)
