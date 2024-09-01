@@ -19,11 +19,12 @@ pdfMappingDict = {
 
 class ElasticStore():
     
-    def __init__(self, http_auth, elastic_docker_ca_crt_fpath, elastic_localhost_url="https://localhost:9200", request_timeout=10):
+    def __init__(self, http_auth, verify_certs=False, elastic_docker_ca_crt_fpath=None, elastic_localhost_url="https://localhost:9200", request_timeout=10):
         self.es = Elasticsearch(
             hosts = [elastic_localhost_url], 
             ca_certs=elastic_docker_ca_crt_fpath, 
             http_auth=http_auth, 
+            verify_certs=verify_certs,
             request_timeout=request_timeout
             )
         logging.info(self.es.info())
