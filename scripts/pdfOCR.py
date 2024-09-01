@@ -3,7 +3,7 @@ from pdf2image import convert_from_path
 import pytesseract
 import pandas as pd
 
-def pdfOCR(pdfFpath, dpi=500, poppler_path='C:\\poppler-23.11.0\\Library\\bin'):
+def pdfOCR(pdfFpath, encoder, dpi=500, poppler_path='C:\\poppler-23.11.0\\Library\\bin'):
     """
     """
     # convert from pdf to images
