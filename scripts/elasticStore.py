@@ -80,20 +80,20 @@ class ElasticStore():
             document = None
         return document
     
-    def bulkDocumentIndexDelete(self, index, mapping, documents, op_type, chunk_size=500):
+    def bulkDocumentIndexDelete(self, index, mappings, documents, op_type, chunk_size=500):
         """
         """
         try:
             # convert documents to dataframe
             dataframe = pd.DataFrame(documents)
-            source_cols = list(mapping["properties"].keys())
-            dataframe[['_index', '_type', '_op_type']] = (index, '_doc', op_type)
+            source_cols = list(mappings["properties"].keys())
+            dataframe[['_index', '_op_type']] = (index, op_type)
             dataframe['_source'] = dataframe[source_cols].apply(lambda series: series.to_dict(),axis=1)
             # determine action columns based on operation
             if op_type in ('index'): # create / overwrite operations
-                bulk_cols = ['_index', '_type', '_op_type', '_id', '_source']
+                bulk_cols = ['_index', '_op_type', '_id', '_source']
             elif op_type in ('delete'):
-                bulk_cols = ['_index', '_type', '_op_type', '_id']
+                bulk_cols = ['_index', '_op_type', '_id']
             # create elastic actions
             actions = dataframe[bulk_cols].to_dict(orient='records')
             # list of log results to be collected
@@ -102,7 +102,8 @@ class ElasticStore():
             for _, item in helpers.streaming_bulk(client=self.es, actions=actions, index=index, chunk_size=chunk_size):
                 # collect log results
                 log_result = item[op_type]
-                log_result[['_op_type','timestamp']] = op_type, int(datetime.datetime.today().timestamp())
+                log_result['_op_type'] = op_type
+                log_result['timestamp'] = int(datetime.datetime.today().timestamp())
                 log_results.append(log_result)
             # convert log results to dataframe
             log_results_df = pd.DataFrame(log_results)
