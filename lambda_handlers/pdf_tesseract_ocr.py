@@ -50,8 +50,11 @@ if False:
     # get elastic index mapping
     es.getIndexMapping(index=cons.elastic_index_name)
 
-    # load data into elastic index
-    es.loadIndex(index=cons.elastic_index_name, documents=documents)
+    # bulk load data into elastic index
+    es.bulkDocumentIndexDelete(index=cons.elastic_index_name, mappings=pdfMappingDict, documents=documents, op_type='index')
+
+    # bulk delete data from elastic index
+    es.bulkDocumentIndexDelete(index=cons.elastic_index_name, mappings=pdfMappingDict, documents=documents, op_type='delete')
 
     # query document by id
     es.getDocumentfromId(index=cons.elastic_index_name, id='10111')
