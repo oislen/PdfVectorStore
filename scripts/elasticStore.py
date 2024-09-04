@@ -1,6 +1,9 @@
 import logging
-from elasticsearch import Elasticsearch
+import datetime
 from copy import copy
+import pandas as pd
+from elasticsearch import Elasticsearch
+from elasticsearch import helpers
 
 pdfMappingDict = {
     "properties" : {
@@ -29,7 +32,7 @@ class ElasticStore():
             request_timeout=request_timeout
             )
         logging.info(self.es.info())
-
+    
     def deleteIndex(self, index):
         """
         """
@@ -38,7 +41,7 @@ class ElasticStore():
             self.es.indices.delete(index=index, ignore=[400, 404])
         except Exception as e:
             logging.error(e)
-
+    
     def createIndex(self, index, mappings):
         """
         """
@@ -46,18 +49,6 @@ class ElasticStore():
             self.es.indices.create(index=index, mappings=mappings)
         except Exception as e:
             logging.error(e)
-
-    def loadIndex(self, index, documents):
-        """
-        """
-        for i, document in enumerate(documents):
-            try:
-                document = copy(document)
-                id = document['_id']
-                del document['_id']
-                self.es.index(index=index, id=id, document=document)
-            except Exception as e:
-                logging.error(i, e)
     
     def listIndices(self, index="*"):
         """
@@ -68,7 +59,7 @@ class ElasticStore():
             logging.error(e)
             elasticIndices = None
         return elasticIndices
-
+    
     def getIndexMapping(self, index):
         """
         """
@@ -88,6 +79,37 @@ class ElasticStore():
             logging.error(e)
             document = None
         return document
+    
+    def bulkDocumentIndexDelete(self, index, mapping, documents, op_type, chunk_size=500):
+        """
+        """
+        try:
+            # convert documents to dataframe
+            dataframe = pd.DataFrame(documents)
+            source_cols = list(mapping["properties"].keys())
+            dataframe[['_index', '_type', '_op_type']] = (index, '_doc', op_type)
+            dataframe['_source'] = dataframe[source_cols].apply(lambda series: series.to_dict(),axis=1)
+            # determine action columns based on operation
+            if op_type in ('index'): # create / overwrite operations
+                bulk_cols = ['_index', '_type', '_op_type', '_id', '_source']
+            elif op_type in ('delete'):
+                bulk_cols = ['_index', '_type', '_op_type', '_id']
+            # create elastic actions
+            actions = dataframe[bulk_cols].to_dict(orient='records')
+            # list of log results to be collected
+            log_results = []
+            # iterate over streaming bulk generator
+            for _, item in helpers.streaming_bulk(client=self.es, actions=actions, index=index, chunk_size=chunk_size):
+                # collect log results
+                log_result = item[op_type]
+                log_result[['_op_type','timestamp']] = op_type, int(datetime.datetime.today().timestamp())
+                log_results.append(log_result)
+            # convert log results to dataframe
+            log_results_df = pd.DataFrame(log_results)
+        except Exception as e:
+            logging.error(e)
+            log_results_df = None
+        return log_results_df
     
     def vectorSearch(self, text, encoder, elastic_index_name, elastic_field, k=10, num_candidates=10):
         """
