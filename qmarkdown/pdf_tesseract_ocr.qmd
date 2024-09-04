@@ -95,10 +95,16 @@ Get the mapping of a elastic index.
 es.getIndexMapping(index=cons.elastic_index_name)
 ```
 
-Load documents into elastic index.
+Bulk load documents into elastic index.
 
 ```{python}
-es.loadIndex(index=cons.elastic_index_name, documents=documents)
+es.bulkDocumentIndexDelete(index=cons.elastic_index_name, mappings=pdfMappingDict, documents=documents, op_type='index')
+```
+
+Bulk delete documents from elastic index.
+
+```{python}
+es.bulkDocumentIndexDelete(index=cons.elastic_index_name, mappings=pdfMappingDict, documents=documents, op_type='delete')
 ```
 
 Query document by id
