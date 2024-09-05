@@ -1,8 +1,5 @@
-import sys
-import os
 import json
 import logging
-import pytesseract
 
 import PdfVectorStore.scripts.cons as cons
 from PdfVectorStore.scripts.pdfOCR import pdfOCR
