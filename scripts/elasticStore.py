@@ -131,3 +131,18 @@ class ElasticStore():
             logging.error(e)
             results = None
         return results
+
+def objectToDataFrame(object_api_response):
+    """
+    """
+    try:
+        # extract out elastic search hits as a dataframe
+        hitsDf = pd.DataFrame(object_api_response.body['hits']['hits'])
+        # subset out source as a dataframe
+        sourceDf = pd.DataFrame(hitsDf['_source'].to_list())
+        # combine hits and source as a resulting dataframe
+        resultsDf = hitsDf.join(sourceDf).drop(columns=['_source'])
+    except Exception as e:
+        logging.error(e)
+        resultsDf = None
+    return resultsDf
