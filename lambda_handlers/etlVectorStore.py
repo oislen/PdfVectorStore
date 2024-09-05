@@ -10,57 +10,60 @@ from PdfVectorStore.scripts.elasticStore import pdfMappingDict
 from PdfVectorStore.scripts.elasticStore import ElasticStore
 from PdfVectorStore.scripts.bgeEncoder import BgeEncoder
 
-# set up logging
-lgr = logging.getLogger()
-lgr.setLevel(logging.INFO)
+def lambda_handler(
+        operation,
+        elastic_index_name,
+        mappings=None,
+        pdf_fpath=None
+        ):
+    
+    """
+    """
 
-logging.info(f"OCR-ing .pdf file: {cons.pdf_fpath}")
+    # set up logging
+    lgr = logging.getLogger()
+    lgr.setLevel(logging.INFO)
 
-# initialise encoder
-encoder = BgeEncoder()
+    # if pdf file path is given
+    if pdf_fpath != None:
+        logging.info(f"OCR-ing .pdf file: {cons.pdf_fpath}")
+        # initialise encoder
+        encoder = BgeEncoder()
+        # OCR pdf invoice
+        documents = pdfOCR(pdfFpath=pdf_fpath, dpi=cons.dpi, poppler_path=cons.poppler_path, encoder=encoder)
 
-# OCR pdf invoice
-documents = pdfOCR(pdfFpath=cons.pdf_fpath, dpi=cons.dpi, poppler_path=cons.poppler_path, encoder=encoder)
+    logging.info("Connecting to ElasticStore")
 
-logging.info("Connecting to ElasticStore")
+    # load elastic credentials from .json file
+    with open(cons.elastic_docker_cred_fpath, "rb") as j:
+        elastic_config = json.loads(j.read())
 
-# load elastic credientials from .json file
-with open(cons.elastic_docker_cred_fpath, "rb") as j:
-    elastic_config = json.loads(j.read())
+    # connect to elastic store
+    es = ElasticStore(
+        http_auth=(elastic_config["user"], elastic_config["password"]), 
+        elastic_docker_ca_crt_fpath=cons.elastic_docker_ca_crt_fpath,
+        elastic_localhost_url=cons.elastic_localhost_url, 
+        request_timeout=cons.elastic_request_timeout
+        )
 
-# connect to elastic store
-es = ElasticStore(
-    http_auth=(elastic_config["user"], elastic_config["password"]), 
-    elastic_docker_ca_crt_fpath=cons.elastic_docker_ca_crt_fpath,
-    elastic_localhost_url=cons.elastic_localhost_url, 
-    request_timeout=cons.elastic_request_timeout
-    )
-
-# list all elastic indices
-es.listIndices(index=f"*{cons.elastic_index_name}*")
-
-if False:
-
-    # delete index
-    es.deleteIndex(index=cons.elastic_index_name)
-
+     # delete index
+    if operation == 'delete_index':
+        es.deleteIndex(index=elastic_index_name)
     # create index
-    es.createIndex(index=cons.elastic_index_name, mappings=pdfMappingDict)
-
-    # get elastic index mapping
-    es.getIndexMapping(index=cons.elastic_index_name)
-
+    elif operation == 'create_index':
+        es.createIndex(index=elastic_index_name, mappings=mappings)
     # bulk load data into elastic index
-    es.bulkDocumentIndexDelete(index=cons.elastic_index_name, mappings=pdfMappingDict, documents=documents, op_type='index')
-
+    elif operation == 'bulk_index':
+        es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='index')
     # bulk delete data from elastic index
-    es.bulkDocumentIndexDelete(index=cons.elastic_index_name, mappings=pdfMappingDict, documents=documents, op_type='delete')
+    elif operation == 'bulk_delete':
+        es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='delete')
 
-    # query document by id
-    es.getDocumentfromId(index=cons.elastic_index_name, id='10111')
-
-# run the query
-results = es.vectorSearch(text="Musterkunde", encoder=encoder, elastic_index_name=cons.elastic_index_name, elastic_field="encoding", k=10, num_candidates=10)
-
-# print results
-results
+if __name__ == "__main__":
+    
+    lambda_handler(
+        operation=None,
+        elastic_index_name=cons.elastic_index_name,
+        mappings=pdfMappingDict,
+        pdf_fpath=cons.pdf_fpath
+        )
