@@ -10,13 +10,20 @@ import pytesseract
 import pandas as pd
 from elasticsearch import Elasticsearch
 
-sys.path.append(os.path.dirname(os.getcwd()))
+root_dir = "/home/ubuntu" if sys.platform == "linux" else "E:\\GitHub"
+sys.path.append(root_dir)
 
-from scripts.pdfOCR import pdfOCR
-from scripts.elasticStore import pdfMappingDict
-from scripts.elasticStore import ElasticStore
-import scripts.cons as cons
-from scripts.bgeEncoder import BgeEncoder
+from PdfVectorStore.scripts.pdfOCR import pdfOCR
+from PdfVectorStore.scripts.elasticStore import pdfMappingDict
+from PdfVectorStore.scripts.elasticStore import ElasticStore
+from PdfVectorStore.scripts.elasticStore import objectToDataFrame
+import PdfVectorStore.scripts.cons as cons
+from PdfVectorStore.scripts.bgeEncoder import BgeEncoder
+
+from PdfVectorStore.lambda_handlers.etlVectorStore import lambda_handler as etlVectorStore
+from PdfVectorStore.lambda_handlers.queryVectorStore import lambda_handler as queryVectorStore
+
+pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
 ```
 
 Need to install poppler and tesseract locally in windows:
@@ -50,7 +57,6 @@ OCR the data from the image.
 
 ```{python}
 # OCR pdf invoice
-pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
 documents = pdfOCR(pdfFpath=cons.pdf_fpath, dpi=cons.dpi, poppler_path=cons.poppler_path, encoder=encoder)
 ```
 
@@ -120,4 +126,28 @@ Search for text against elastic store.
 results = es.vectorSearch(text="Musterkunde", encoder=encoder, elastic_index_name=cons.elastic_index_name, elastic_field="encoding", k=10, num_candidates=10)
 # print results
 results
+```
+
+# Lambda Handlers
+
+```{python}
+etlVectorStore(
+    operation="bulk_index", # delete_index / create_index / bulk_index / bulk_delete
+    elastic_index_name=cons.elastic_index_name,
+    mappings=pdfMappingDict,
+    pdf_fpath=cons.pdf_fpath
+    )
+```
+
+```{python}
+# query vector store
+results = queryVectorStore(
+    text="Musterkunde AG", 
+    elastic_index_name=cons.elastic_index_name, 
+    elastic_field="encoding", 
+    k=10, 
+    num_candidates=10
+    )
+# convert api results to dataframe
+resultsDf = objectToDataFrame(results)
 ```
