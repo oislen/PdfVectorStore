@@ -10,31 +10,28 @@ from PdfVectorStore.scripts.bgeEncoder import BgeEncoder
 def lambda_handler(
         operation,
         elastic_index_name,
+        encoder=None,
         mappings=None,
         pdf_fpath=None
         ):
     
     """
     """
-
+    
     # set up logging
     lgr = logging.getLogger()
     lgr.setLevel(logging.INFO)
-
+    
     # if pdf file path is given
-    if pdf_fpath != None:
+    if (pdf_fpath != None) and (encoder != None) and operation in ("bulk_index","bulk_delete"):
         logging.info(f"OCR-ing .pdf file: {cons.pdf_fpath}")
-        # initialise encoder
-        encoder = BgeEncoder()
         # OCR pdf invoice
         documents = pdfOCR(pdfFpath=pdf_fpath, dpi=cons.dpi, poppler_path=cons.poppler_path, encoder=encoder)
-
+    
     logging.info("Connecting to ElasticStore")
-
     # load elastic credentials from .json file
     with open(cons.elastic_docker_cred_fpath, "rb") as j:
         elastic_config = json.loads(j.read())
-
     # connect to elastic store
     es = ElasticStore(
         http_auth=(elastic_config["user"], elastic_config["password"]), 
@@ -42,7 +39,7 @@ def lambda_handler(
         elastic_localhost_url=cons.elastic_localhost_url, 
         request_timeout=cons.elastic_request_timeout
         )
-
+    
      # delete index
     if operation == 'delete_index':
         es.deleteIndex(index=elastic_index_name)
@@ -57,10 +54,17 @@ def lambda_handler(
         es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='delete')
 
 if __name__ == "__main__":
-    
+    # set parameters
+    operation="bulk_index"
+    elastic_index_name=cons.elastic_index_name
+    encoder = BgeEncoder()
+    mappings=pdfMappingDict
+    pdf_fpath=cons.pdf_fpath
+    # call lambda handler
     lambda_handler(
-        operation=None,
-        elastic_index_name=cons.elastic_index_name,
-        mappings=pdfMappingDict,
-        pdf_fpath=cons.pdf_fpath
+        operation=operation,
+        elastic_index_name=elastic_index_name,
+        encoder=encoder,
+        mappings=mappings,
+        pdf_fpath=pdf_fpath
         )
