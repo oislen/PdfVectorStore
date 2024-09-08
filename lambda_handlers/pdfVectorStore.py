@@ -61,11 +61,13 @@ def lambda_handler(
     # bulk load data into elastic index
     elif operation == 'bulk_index':
         logging.info(f"Bulk index for elastic index {elastic_index_name}")
-        es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='index')
+        results = es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='index')
+        logging.info(results)
     # bulk delete data from elastic index
     elif operation == 'bulk_delete':
         logging.info(f"Bulk delete for elastic index {elastic_index_name}")
-        es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='delete')
+        results = es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='delete')
+        logging.info(results)
     # query data from elastic index
     elif operation == 'query_index':
         logging.info("Querying Vector Store.")
@@ -78,7 +80,7 @@ def lambda_handler(
             k=k, 
             num_candidates=num_candidates
             )
-        print(results)
+        logging.info(results)
 
 if __name__ == "__main__":
     # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation delete_index --elastic_index_name pdfvectorstore
