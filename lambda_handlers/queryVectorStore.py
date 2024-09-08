@@ -1,9 +1,9 @@
 import json
 import logging
 
-import PdfVectorStore.scripts.cons as cons
-from PdfVectorStore.scripts.elasticStore import ElasticStore
-from PdfVectorStore.scripts.bgeEncoder import BgeEncoder
+import PdfVectorStore.cons as cons
+from PdfVectorStore.elastic.elasticStore import ElasticStore
+from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
 
 def lambda_handler(
         text, 

@@ -3,11 +3,11 @@ import json
 import logging
 import pytesseract
 
-import PdfVectorStore.scripts.cons as cons
-from PdfVectorStore.scripts.pdfOCR import pdfOCR
-from PdfVectorStore.scripts.elasticStore import pdfMappingDict
-from PdfVectorStore.scripts.elasticStore import ElasticStore
-from PdfVectorStore.scripts.bgeEncoder import BgeEncoder
+import PdfVectorStore.cons as cons
+from PdfVectorStore.tesseract.pdfOCR import pdfOCR
+from PdfVectorStore.elastic.elasticStore import pdfMappingDict
+from PdfVectorStore.elastic.elasticStore import ElasticStore
+from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
 
 def lambda_handler(
         operation,
