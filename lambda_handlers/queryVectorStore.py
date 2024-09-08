@@ -1,5 +1,9 @@
 import json
+import os
+import sys
 import logging
+
+sys.path.append(os.getcwd())
 
 import PdfVectorStore.cons as cons
 from PdfVectorStore.elastic.elasticStore import ElasticStore
@@ -47,16 +51,17 @@ def lambda_handler(
     return results
 
 if __name__ == "__main__":
+    # python PdfVectorStore\lambda_handlers\etlVectorStore.py --elastic_index_name pdfvectorstore --text Musterkunde
     # set parameters
-    text = "Musterkunde"
-    elastic_index_name=cons.elastic_index_name
+    #text = "Musterkunde"
+    #elastic_index_name=cons.elastic_index_name
     elastic_field="encoding"
     encoder = BgeEncoder()
     k=10
     num_candidates=10
-    operation, pdf_fpath, text = commandlineInterface()
+    operation, pdf_fpath, elastic_index_name, text = commandlineInterface()
     # call lambda handler
-    lambda_handler(
+    results=lambda_handler(
         text=text, 
         elastic_index_name=elastic_index_name, 
         elastic_field=elastic_field,
@@ -64,3 +69,4 @@ if __name__ == "__main__":
         k=k, 
         num_candidates=num_candidates
         )
+    print(results)

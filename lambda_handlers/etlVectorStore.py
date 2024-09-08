@@ -1,7 +1,10 @@
 import sys
+import os
 import json
 import logging
 import pytesseract
+
+sys.path.append(os.getcwd())
 
 import PdfVectorStore.cons as cons
 from PdfVectorStore.tesseract.pdfOCR import pdfOCR
@@ -61,13 +64,14 @@ def lambda_handler(
         es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='delete')
 
 if __name__ == "__main__":
+    # python PdfVectorStore\lambda_handlers\etlVectorStore.py --operation bulk_index --pdf_fpath E:\GitHub\PdfVectorStore\data\1.pdf --elastic_index_name pdfvectorstore
     # set parameters
-    operation="bulk_index"
-    elastic_index_name=cons.elastic_index_name
+    #operation="bulk_index"
+    #elastic_index_name=cons.elastic_index_name
     encoder = BgeEncoder()
     mappings=pdfMappingDict
-    pdf_fpath=cons.pdf_fpath
-    operation, pdf_fpath, text = commandlineInterface()
+    #pdf_fpath=cons.pdf_fpath
+    operation, pdf_fpath, elastic_index_name, text = commandlineInterface()
     # assign tesseract cmd when not linux
     if sys.platform != "linux":
         pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
