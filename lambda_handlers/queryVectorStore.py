@@ -15,7 +15,7 @@ def lambda_handler(
         ):
     """
     """
-
+    
     # set up logging
     lgr = logging.getLogger()
     lgr.setLevel(logging.INFO)
