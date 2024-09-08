@@ -1,5 +1,7 @@
+import sys
 import json
 import logging
+import pytesseract
 
 import PdfVectorStore.scripts.cons as cons
 from PdfVectorStore.scripts.pdfOCR import pdfOCR
@@ -42,15 +44,19 @@ def lambda_handler(
     
      # delete index
     if operation == 'delete_index':
+        logging.info(f"Deleting elastic index {elastic_index_name}")
         es.deleteIndex(index=elastic_index_name)
     # create index
     elif operation == 'create_index':
+        logging.info(f"Creating elastic index {elastic_index_name}")
         es.createIndex(index=elastic_index_name, mappings=mappings)
     # bulk load data into elastic index
     elif operation == 'bulk_index':
+        logging.info(f"Bulk index for elastic index {elastic_index_name}")
         es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='index')
     # bulk delete data from elastic index
     elif operation == 'bulk_delete':
+        logging.info(f"Bulk delete for elastic index {elastic_index_name}")
         es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='delete')
 
 if __name__ == "__main__":
@@ -60,6 +66,9 @@ if __name__ == "__main__":
     encoder = BgeEncoder()
     mappings=pdfMappingDict
     pdf_fpath=cons.pdf_fpath
+    # assign tesseract cmd when not linux
+    if sys.platform != "linux":
+        pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
     # call lambda handler
     lambda_handler(
         operation=operation,
