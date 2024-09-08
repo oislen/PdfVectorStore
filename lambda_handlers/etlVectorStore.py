@@ -8,6 +8,7 @@ from PdfVectorStore.tesseract.pdfOCR import pdfOCR
 from PdfVectorStore.elastic.elasticStore import pdfMappingDict
 from PdfVectorStore.elastic.elasticStore import ElasticStore
 from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
+from PdfVectorStore.utilites.commandlineInterface import commandlineInterface
 
 def lambda_handler(
         operation,
@@ -66,6 +67,7 @@ if __name__ == "__main__":
     encoder = BgeEncoder()
     mappings=pdfMappingDict
     pdf_fpath=cons.pdf_fpath
+    operation, pdf_fpath, text = commandlineInterface()
     # assign tesseract cmd when not linux
     if sys.platform != "linux":
         pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath

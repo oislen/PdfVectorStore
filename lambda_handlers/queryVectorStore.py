@@ -4,6 +4,7 @@ import logging
 import PdfVectorStore.cons as cons
 from PdfVectorStore.elastic.elasticStore import ElasticStore
 from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
+from PdfVectorStore.utilites.commandlineInterface import commandlineInterface
 
 def lambda_handler(
         text, 
@@ -53,6 +54,7 @@ if __name__ == "__main__":
     encoder = BgeEncoder()
     k=10
     num_candidates=10
+    operation, pdf_fpath, text = commandlineInterface()
     # call lambda handler
     lambda_handler(
         text=text, 
