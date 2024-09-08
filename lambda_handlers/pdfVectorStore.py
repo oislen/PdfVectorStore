@@ -16,9 +16,13 @@ from PdfVectorStore.utilites.commandlineInterface import commandlineInterface
 def lambda_handler(
         operation,
         elastic_index_name,
+        text=None,
         encoder=None,
         mappings=None,
-        pdf_fpath=None
+        pdf_fpath=None,
+        elastic_field="encoding",
+        k=10,
+        num_candidates=10
         ):
     
     """
@@ -62,16 +66,30 @@ def lambda_handler(
     elif operation == 'bulk_delete':
         logging.info(f"Bulk delete for elastic index {elastic_index_name}")
         es.bulkDocumentIndexDelete(index=elastic_index_name, mappings=mappings, documents=documents, op_type='delete')
+    # query data from elastic index
+    elif operation == 'query_index':
+        logging.info("Querying Vector Store.")
+        # run the query
+        results = es.vectorSearch(
+            text=text, 
+            encoder=encoder, 
+            elastic_index_name=elastic_index_name, 
+            elastic_field=elastic_field, 
+            k=k, 
+            num_candidates=num_candidates
+            )
+        print(results)
 
 if __name__ == "__main__":
-    # python PdfVectorStore\lambda_handlers\etlVectorStore.py --operation bulk_index --pdf_fpath E:\GitHub\PdfVectorStore\data\1.pdf --elastic_index_name pdfvectorstore
+    # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation delete_index --elastic_index_name pdfvectorstore
+    # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation create_index --elastic_index_name pdfvectorstore
+    # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation bulk_index --pdf_fpath E:\GitHub\PdfVectorStore\data\1.pdf --elastic_index_name pdfvectorstore
+    # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation bulk_delete --pdf_fpath E:\GitHub\PdfVectorStore\data\1.pdf --elastic_index_name pdfvectorstore
+    # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation query_index --elastic_index_name pdfvectorstore --text Musterkunde
     # set parameters
-    #operation="bulk_index"
-    #elastic_index_name=cons.elastic_index_name
-    encoder = BgeEncoder()
-    mappings=pdfMappingDict
-    #pdf_fpath=cons.pdf_fpath
     operation, pdf_fpath, elastic_index_name, text = commandlineInterface()
+    encoder = None if operation in ("delete_index", "create_index") else BgeEncoder()
+    mappings = None if operation in ("delete_index") else pdfMappingDict
     # assign tesseract cmd when not linux
     if sys.platform != "linux":
         pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
@@ -79,6 +97,7 @@ if __name__ == "__main__":
     lambda_handler(
         operation=operation,
         elastic_index_name=elastic_index_name,
+        text=text,
         encoder=encoder,
         mappings=mappings,
         pdf_fpath=pdf_fpath
