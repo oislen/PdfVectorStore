@@ -3,6 +3,9 @@ import os
 import json
 import logging
 import pytesseract
+import pandas as pd
+
+pd.options.display.max_columns = None
 
 sys.path.append(os.getcwd())
 
