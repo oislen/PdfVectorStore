@@ -1,5 +1,5 @@
 # get base image
-FROM ubuntu:20.04
+FROM ubuntu:latest
 
 # set environment variables
 ENV user=ubuntu
@@ -31,4 +31,4 @@ COPY requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt
 
 WORKDIR /home/${user}
-CMD ["bash"]
+CMD ["python3", "PdfVectorStore/lambda_handlers/pdfVectorStore.py"]
