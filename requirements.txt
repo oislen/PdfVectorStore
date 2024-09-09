@@ -1,10 +1,8 @@
 pandas
 elasticsearch
 pdf2image
-transformers==4.6.1
+transformers
 torch
-#pillow>=8.0.0
 pytesseract
 tesseract
-#tesseract-ocr
 ipykernel
