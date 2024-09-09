@@ -32,4 +32,4 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN /opt/venv/bin/python3 -m pip install -r /tmp/requirements.txt
 
 WORKDIR /home/${user}
-CMD ["/opt/venv/bin/python3", "PdfVectorStore/lambda_handlers/pdfVectorStore.py"]
+ENTRYPOINT  ["/opt/venv/bin/python3", "PdfVectorStore/lambda_handlers/pdfVectorStore.py"]
