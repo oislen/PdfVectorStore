@@ -10,6 +10,7 @@ import PdfVectorStore.cons as cons
 from PdfVectorStore.tesseract.pdfOCR import pdfOCR
 from PdfVectorStore.elastic.elasticStore import pdfMappingDict
 from PdfVectorStore.elastic.elasticStore import ElasticStore
+from PdfVectorStore.elastic.elasticStore import objectToDataFrame
 from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
 from PdfVectorStore.utilites.commandlineInterface import commandlineInterface
 
@@ -80,7 +81,7 @@ def lambda_handler(
             k=k, 
             num_candidates=num_candidates
             )
-        logging.info(results)
+        logging.info(objectToDataFrame(results)[['_id','invoice_id','page_num','text','_score']])
 
 if __name__ == "__main__":
     # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation delete_index --elastic_index_name pdfvectorstore
