@@ -10,7 +10,6 @@ RUN apt-get update
 RUN apt-get install -y apt-utils vim curl wget unzip git tree htop
 
 # set up home environment
-RUN useradd ${user}
 RUN mkdir -p /home/${user} && chown -R ${user}: /home/${user}
 
 # install git and pull pdfsearch repo
@@ -26,9 +25,11 @@ RUN apt-get install -y poppler-utils
 RUN apt-get install -y ffmpeg libsm6 libxext6
 
 # install required python packages
-RUN apt-get install -y python3 python3-pip
 COPY requirements.txt /tmp/
-RUN pip3 install -r /tmp/requirements.txt
+RUN apt-get install -y python3 python3-venv python3-pip
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN /opt/venv/bin/python3 -m pip install -r /tmp/requirements.txt
 
 WORKDIR /home/${user}
-CMD ["python3", "PdfVectorStore/lambda_handlers/pdfVectorStore.py"]
+CMD ["/opt/venv/bin/python3", "PdfVectorStore/lambda_handlers/pdfVectorStore.py"]
