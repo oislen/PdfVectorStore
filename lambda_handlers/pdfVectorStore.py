@@ -90,8 +90,8 @@ if __name__ == "__main__":
     # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation query_index --elastic_index_name pdfvectorstore --text Musterkunde
     # set parameters
     operation, pdf_fpath, elastic_index_name, text = commandlineInterface()
-    encoder = None if operation in ("delete_index", "create_index") else BgeEncoder()
-    mappings = None if operation in ("delete_index") else pdfMappingDict
+    encoder = None if operation in ["delete_index", "create_index"] else BgeEncoder()
+    mappings = None if operation in ["delete_index"] else pdfMappingDict
     # assign tesseract cmd when not linux
     if sys.platform != "linux":
         pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
