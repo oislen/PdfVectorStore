@@ -18,4 +18,4 @@ call docker build --no-cache --tag %DOCKER_IMAGE% .
 
 :: run docker container
 SET UBUNTU_DIR=/home/ubuntu
-call docker run --name %DOCKER_CONTAINER_NAME% --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm %DOCKER_IMAGE%  --operation query_index --elastic_index_name pdfvectorstore --text Musterkunde > docker_run_log.txt
+call docker run --name %DOCKER_CONTAINER_NAME% --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm %DOCKER_IMAGE%  --operation query_index --elastic_index_name pdfvectorstore --text Musterkunde
