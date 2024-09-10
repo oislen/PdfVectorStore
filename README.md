@@ -1,9 +1,17 @@
 # PdfVectorStore
 
 ## Overview
-* Configure docker containers with kibana, elasticsearch, and pytesseract
-* Design pipeline to extract data from pdf file using pytesseract and store in elastic search as .json object
-* Have python scripts for creating / loading elastic search index
-* Search extracted pdf data using custom elastic search criteria
-* Optional is to create vector store for custom search mechanism
-* Use bge encoder to encode line level data from pdf
+
+This repository contains the code for an ETL process which:
+1. Extracts text data from .pdf files using Tesseract OCR
+2. Encodes the extracted text using HuggingFace encoders
+3. Loads the encoded text data into ElasticSearch
+4. Searches ElasticSearch for text queries
+
+## Execution
+
+The repository has been containerised for all ETL and query operations.
+
+### Vector Search
+
+    docker run --name pdf01 --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm oislen/pdfvectorstore:latest  --operation query_index --elastic_index_name pdfvectorstore --text Musterkunde
