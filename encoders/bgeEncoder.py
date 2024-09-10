@@ -15,15 +15,49 @@ class BgeEncoder(torch.nn.Module):
         self.model = transformers.AutoModel.from_pretrained(model_type)
         self.model_type = model_type.split('/')[-1]
         
-    def encode(self, text, parameters = {}):
+    def encode(self, text):
+        """
+        Encode text using the encoder object.
+        
+            Parameters
+            ----------
+            text : str
+                The text to encode.
+            
+            Returns
+            -------
+            encoding : numpy.array
+                The text encoding array.
+        """
         encoded_input = self.tokenizer(text, max_length=self.max_len, padding="max_length", truncation=True, return_tensors='pt')
         _, output = self.model(**encoded_input, return_dict=False)
         encoding = output.cpu().detach().numpy().flatten()
         return encoding
     
     def save(self, model_fpath):
+        """
+        Serialises the encoder model to disk.
+        
+            Parameters
+            ----------
+            model_fpath : str
+                The file path to serialise the encoder model to disk.
+        """
         torch.save(self.state_dict(), model_fpath)
 
     def load(self, model_fpath):
+        """
+        Loads the encoder model from disk.
+        
+            Parameters
+            ----------
+            model_fpath : str
+                The file path to load the encoder model from disk.
+            
+            Returns
+            -------
+            self : encoder
+                The loaded encoder model.
+        """
         self.load_state_dict(torch.load(model_fpath))
         return self
