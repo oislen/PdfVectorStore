@@ -214,7 +214,7 @@ class ElasticStore():
             k : int
                 The number of nearest neighbours to search, default is 10.
             num_candidates : int
-                The number of results to return, default is 10.
+                The number of query results to return, default is 10.
             
             Returns
             -------
