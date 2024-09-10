@@ -30,6 +30,33 @@ def lambda_handler(
         ):
     
     """
+        Executable lambda handler function for running pdf vector store operations.
+        
+            Parameters
+            ----------
+            operation : str
+                The operation type to perform; either 'delete_index', 'create_index', 'bulk_index', 'bulk_delete' or 'query_index'.
+            elastic_index_name : str
+                The name of the elastic index.
+            text : str
+                The text to search for in the elastic index, default is None.
+            encoder : encoder
+                The encoder to use for encoding the text for vector search, default is None.
+            mappings : dict
+                The mapping structure of the elastic index, default is None.
+            pdf_fpath : str
+                The .pdf file path to etl into the vector store, default is None.
+            elastic_field : str
+                The encoding field of the elastic index to vector search, default is 'encoding'.
+            k : int
+                The number of nearest neighbours to search, default is 10.
+            num_candidates : int
+                The number of query results to return, default is 10.
+            
+            Returns
+            -------
+            results : dict, pandas.DataFrame
+                The results of the lambda handler execution
     """
     
     # set up logging
@@ -57,11 +84,11 @@ def lambda_handler(
      # delete index
     if operation == 'delete_index':
         logging.info(f"Deleting elastic index {elastic_index_name}")
-        es.deleteIndex(index=elastic_index_name)
+        results = es.deleteIndex(index=elastic_index_name)
     # create index
     elif operation == 'create_index':
         logging.info(f"Creating elastic index {elastic_index_name}")
-        es.createIndex(index=elastic_index_name, mappings=mappings)
+        results = es.createIndex(index=elastic_index_name, mappings=mappings)
     # bulk load data into elastic index
     elif operation == 'bulk_index':
         logging.info(f"Bulk index for elastic index {elastic_index_name}")
@@ -85,6 +112,7 @@ def lambda_handler(
             num_candidates=num_candidates
             )
         logging.info(objectToDataFrame(results)[['text','_score']])
+    return results
 
 if __name__ == "__main__":
     # python PdfVectorStore\lambda_handlers\pdfVectorStore.py --operation delete_index --elastic_index_name pdfvectorstore
