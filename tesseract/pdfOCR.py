@@ -5,6 +5,23 @@ import pandas as pd
 
 def pdfOCR(pdfFpath, encoder, dpi=500, poppler_path='C:\\poppler-23.11.0\\Library\\bin'):
     """
+    Applies OCR to extract data from .pdf files.
+    
+        Parameters
+        ----------
+        pdfFpath : str
+            The .pdf file path to etl into the vector store.
+        encoder : encoder
+            The encoder to use for encoding the text for vector search.
+        dpi : int
+            The dpi for image quality of the OCR.
+        poppler_path : str
+            The file path to local poppler installation on Windows.
+        
+        Returns
+        -------
+        aggDict : list of dicts
+            The extracted .pdf data from the OCR process.
     """
     # convert from pdf to images
     docs = convert_from_path(pdf_path=pdfFpath, dpi=dpi, poppler_path=poppler_path)
