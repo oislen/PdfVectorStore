@@ -28,8 +28,14 @@ The Kibana image contains the Kibana installation. Data can be loaded or queried
     # create an elastic index called pdfvectorstore
     docker run --name pdf01 --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm oislen/pdfvectorstore:latest --operation create_index --elastic_index_name pdfvectorstore
 
+    # delete an elastic index called pdfvectorstore
+    docker run --name pdf01 --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm oislen/pdfvectorstore:latest --operation delete_index --elastic_index_name pdfvectorstore
+
     # etl a .pdf file into the elastic index pdfvectorstore
     docker run --name pdf01 --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm oislen/pdfvectorstore:latest --operation bulk_index --pdf_fpath E:\GitHub\PdfVectorStore\data\1.pdf --elastic_index_name pdfvectorstore
-    
+
+    # delete a .pdf file from the elastic index pdfvectorstore
+    docker run --name pdf01 --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm oislen/pdfvectorstore:latest --operation bulk_delete --pdf_fpath E:\GitHub\PdfVectorStore\data\1.pdf --elastic_index_name pdfvectorstore
+
     # query the elastic index pdfvectorstore for the text Musterkunde
     docker run --name pdf01 --net elastic --publish 8501:8501 --volume E:\GitHub\PdfVectorStore\.cred:/home/ubuntu/PdfVectorStore/.cred --rm oislen/pdfvectorstore:latest  --operation query_index --elastic_index_name pdfvectorstore --text Musterkunde
