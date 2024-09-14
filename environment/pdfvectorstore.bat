@@ -4,7 +4,7 @@ call conda env list
 :: create and activate new environment
 call conda env remove --name pdfvectorstore
 call conda env list
-call conda create --name pdfvectorstore python=3.6 --yes
+call conda create --name pdfvectorstore python=3 --yes
 call conda activate pdfvectorstore
 call conda list
 
