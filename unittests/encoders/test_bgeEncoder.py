@@ -3,13 +3,14 @@ import os
 import sys
 import pickle
 
-sys.path.append(os.getcwd())
+root_dir = "/home/ubuntu" if sys.platform == "linux" else "E:\\GitHub"
+sys.path.append(root_dir)
 
-from encoders.bgeEncoder import BgeEncoder
+from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
 
 encoder = BgeEncoder()
 text = "This is a test sentence for encoding."
-exp_encoding_fpath = os.path.join(os.getcwd(), 'unittests','data','exp_encoding.pickle')
+exp_encoding_fpath = os.path.join(root_dir, 'PdfVectorStore', 'unittests','data','exp_encoding.pickle')
 
 if False:
     with open(exp_encoding_fpath, 'wb') as f:
@@ -24,7 +25,7 @@ class Test_BgeEncoder(unittest.TestCase):
     def setUp(self):
         self.encoder = encoder
         self.text = text
-        self.obs_encoding = encoder.encode(text = text)
+        self.obs_encoding = self.encoder.encode(text = self.text)
         self.exp_encoding = exp_encoding
 
     def test_type(self):
