@@ -20,8 +20,7 @@ from PdfVectorStore.elastic.elasticStore import objectToDataFrame
 import PdfVectorStore.cons as cons
 from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
 
-from PdfVectorStore.lambda_handlers.etlVectorStore import lambda_handler as etlVectorStore
-from PdfVectorStore.lambda_handlers.queryVectorStore import lambda_handler as queryVectorStore
+from PdfVectorStore.lambda_handlers.pdfVectorStore import lambda_handler as pdfVectorStore
 
 pytesseract.pytesseract.tesseract_cmd = cons.tesseract_exe_fpath
 ```
