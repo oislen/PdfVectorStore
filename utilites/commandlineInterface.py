@@ -3,29 +3,22 @@ import argparse
 def commandlineInterface():
     
     """
+    This allows the process to be called from the command line.
     
-    Commandline Interface Documentation
-    
-    Overview
-    
-    This allows the programme to be called from the commandline in Linux or the anaconda prompt in Windows.
-    
-    Parameters
-    
-    --operation
-    --elastic_index_name
-    --pdf_fpath
-    --text
-    
-    Returns
-    
-    Commandline inputs specified above 
-    
-    Example
-    
-	 # for executing the programme with latest data
-	 python exec.py 
-    
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        operation : str 
+            The operation to perform; one of 'create_index', 'delete_index', 'bulk_index', 'bulk_delete' or 'query_text', default is None
+        pdf_fpath : str 
+            The full path to the .pdf file to ETL into the specified elastic index, default is None
+        elastic_index_name : str 
+            The name of the elastic index for the operation to occur against, default is None
+        text : str
+            The text to search within the elastic index
     """
     
     # define argument parser object
