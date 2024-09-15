@@ -15,7 +15,7 @@ from PdfVectorStore.elastic.elasticStore import pdfMappingDict
 from PdfVectorStore.elastic.elasticStore import ElasticStore
 from PdfVectorStore.elastic.elasticStore import objectToDataFrame
 from PdfVectorStore.encoders.bgeEncoder import BgeEncoder
-from PdfVectorStore.utilites.commandlineInterface import commandlineInterface
+from PdfVectorStore.utilities.commandlineInterface import commandlineInterface
 
 def lambda_handler(
         operation,
