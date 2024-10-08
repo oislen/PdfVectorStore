@@ -1,3 +1,13 @@
+import os
+import platform
+
+# set huggingface hub directory
+if platform.system() == 'Windows':
+    huggingface_hub_dir = 'E:\\huggingface\\hub'
+    os.environ['HF_HOME'] = huggingface_hub_dir
+    os.environ['HF_DATASETS_CACHE'] = huggingface_hub_dir
+    os.environ['TORCH_HOME'] = huggingface_hub_dir
+
 import torch
 import transformers
 
